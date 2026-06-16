@@ -1,7 +1,22 @@
 import logo from './logo.svg';
 import './App.css';
+import {useState, useEffect} from 'react';
 
 function App() {
+  const[mood, setMood] = useState(null)
+  const[activity, setActivity] = useState(null)
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const fetchRecommendations = async() => {
+    if(!activity.trim()){
+      setError("Please tell me what you are doing");
+      return;ss
+    }
+    setLoading(true);
+    setError('');
+    
+  }
   return (
     <div>
       <div className='row'>
