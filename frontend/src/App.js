@@ -3,23 +3,30 @@ import './App.css';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <div className='row'>
+      <label className = "mood" htmlFor = "mood">Mood:</label>
+      <select id="mood" name="mood">
+      <option value = "happy">Happy</option>
+      <option value = "sad">Sad</option>
+      <option value = "energetic"> Energetic</option>
+      <option value = "chill">Chill</option>
+      <option value = "party">Party</option>
+      </select>
     </div>
-  );
+    
+    <div className='row'>
+      <label className='activity' htmlFor='activity'>What are you doing?</label>
+      <input type = "text" id="activity" placeholder='e.g., working, driving' />
+    </div>
+    
+    <div>
+      <button className='search-btn'>Search Recommendations</button>
+    </div>
+
+    </div>
+  )
+   
 }
 
 export default App;
