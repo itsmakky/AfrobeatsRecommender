@@ -2,11 +2,14 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from groq import Groq
 import os
+import os #gets the API key instead of having it hardcoded
 import json
 
 app = Flask(__name__)
 CORS(app)
 client = Groq(api_key=os.environ.get('GROQ_API_KEY'))
+
+
 
 @app.route('/recommend', methods=['POST'])
 def recommend():

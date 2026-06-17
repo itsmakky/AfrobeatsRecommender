@@ -1,32 +1,91 @@
 import logo from './logo.svg';
 import './App.css';
+import {useState, useEffect} from 'react';
 
 function App() {
+  const[mood, setMood] = useState('')
+  const[activity, setActivity] = useState('')
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [recommendations, setRecommendations] = useState([])
+
+  const fetchRecommendations = async() => {
+    if(!activity.trim()){
+      setError("Please tell me what you are doing");
+      return;
+    }
+    setLoading(true);
+    setError('');
+
+    try{
+      const response = await fetch('http://localhost:5000/recommend',{
+        method:'POST',
+        headers:{
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({mood,activity})
+      })
+      if(!response.ok){
+        throw new Error("failed to get recommendations");
+      }
+
+      const data = await response.json()
+      setRecommendations(data.songs)
+    }
+    catch(err){
+      setError("Error recommending")
+      console.log("Error:", err )
+    }
+
+    finally{
+      setLoading(false)
+    }
+   
+
+
+    }
+    
+
+    
+  
   return (
-    <div>
-      <div className='row'>
-      <label className = "mood" htmlFor = "mood">Mood:</label>
-      <select id="mood" name="mood">
-      <option value = "happy">Happy</option>
-      <option value = "sad">Sad</option>
-      <option value = "energetic"> Energetic</option>
-      <option value = "chill">Chill</option>
-      <option value = "party">Party</option>
+  <div>
+    <div className='row'>
+      <label className="mood" htmlFor="mood">Mood:</label>
+      <select id="mood" name="mood" value={mood} onChange={(e)=> setMood(e.target.value)}>
+        <option value="happy">Happy</option>
+        <option value="sad">Sad</option>
+        <option value="energetic">Energetic</option>
+        <option value="chill">Chill</option>
+        <option value="party">Party</option>
       </select>
     </div>
     
     <div className='row'>
       <label className='activity' htmlFor='activity'>What are you doing?</label>
-      <input type = "text" id="activity" placeholder='e.g., working, driving' />
+      <input type="text" id="activity" placeholder='e.g., working, driving' value={activity} onChange={(e)=> setActivity(e.target.value)} />
     </div>
     
     <div>
-      <button className='search-btn'>Search Recommendations</button>
+      <button className='search-btn' onClick={fetchRecommendations} disabled={loading}>
+        {loading ? "Searching ..." : "Search recommendations"}
+      </button>
     </div>
 
-    </div>
-  )
-   
+    {error && <div className='error'>{error}</div>}
+
+    {recommendations.length > 0 && (
+      <div className="results">
+        <h3>🎵 Recommendations</h3>
+        {recommendations.map((song, index) => (
+          <div key={index} className="song-card">
+            <p><strong>{song.title}</strong> - {song.artist}</p>
+          </div>
+        ))}
+      </div>
+    )}
+  </div>
+);
 }
 
 export default App;
