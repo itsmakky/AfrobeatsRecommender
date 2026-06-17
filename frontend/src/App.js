@@ -79,7 +79,12 @@ function App() {
         <h3>🎵 Recommendations</h3>
         {recommendations.map((song, index) => (
           <div key={index} className="song-card">
-            <p><strong>{song.title}</strong> - {song.artist}</p>
+            <div classname="song-info">
+              <span className="song-number">{index + 1}.</span>
+              <span className="song-title">{song.title}</span>
+              <span className="song-artist">- {song.artist}</span>
+
+            </div>
           </div>
         ))}
       </div>
