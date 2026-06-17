@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from groq import Groq
+import os
 import os #gets the API key instead of having it hardcoded
 import json
 
@@ -33,18 +34,12 @@ def recommend():
         text = response.choices[0].message.content
         if '```json' in text:
             text = text.split('```json')[1].split('```')[0]
-        recommendations = json.loads(text)  # converts strings to python dictionary
-        return jsonify(recommendations)  # converts python dictionary to JSON string
+        recommendations = json.loads(text)
+        return jsonify(recommendations)
     
     except Exception as e:
         print("Error:", e)
         return jsonify({"error": str(e)}), 500
-
-
-
-
-
-
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
