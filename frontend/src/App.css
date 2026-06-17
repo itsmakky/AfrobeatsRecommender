@@ -96,5 +96,122 @@ button:hover {
   background-color: #6a0dad;
 }
 
+/* ===== MUSIC RECOMMENDATIONS STYLES ===== */
 
+.results {
+  margin-top: 25px;
+  text-align: left;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+/* Custom scrollbar for results */
+.results::-webkit-scrollbar {
+  width: 6px;
+}
+
+.results::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.results::-webkit-scrollbar-thumb {
+  background: purple;
+  border-radius: 10px;
+}
+
+.song-card {
+  background: #f8f8f8;
+  padding: 14px 18px;
+  margin-bottom: 10px;
+  border-radius: 12px;
+  border-left: 5px solid purple;
+  transition: all 0.3s ease;
+  cursor: default;
+}
+
+.song-card:hover {
+  background: #f0f0f0;
+  transform: translateX(5px);
+  box-shadow: 0 4px 12px rgba(128, 0, 128, 0.15);
+}
+
+.song-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  font-family: 'Inter', sans-serif;
+}
+
+.song-number {
+  color: purple;
+  font-weight: 700;
+  font-size: 14px;
+  min-width: 28px;
+  background: #f0e6f0;
+  padding: 2px 8px;
+  border-radius: 50%;
+  text-align: center;
+}
+
+.song-title {
+  font-weight: 700;
+  color: #1a1a2e;
+  font-size: 16px;
+}
+
+.song-artist {
+  color: #666;
+  font-size: 14px;
+}
+
+/* Song card animation on load */
+.song-card {
+  animation: slideIn 0.3s ease forwards;
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.song-card:nth-child(1) { animation-delay: 0.05s; }
+.song-card:nth-child(2) { animation-delay: 0.10s; }
+.song-card:nth-child(3) { animation-delay: 0.15s; }
+.song-card:nth-child(4) { animation-delay: 0.20s; }
+.song-card:nth-child(5) { animation-delay: 0.25s; }
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Results heading */
+.results h3 {
+  font-family: 'Playfair Display', serif;
+  color: #1a1a2e;
+  font-size: 22px;
+  margin-bottom: 18px;
+  text-align: center;
+  border-bottom: 2px solid #f0e6f0;
+  padding-bottom: 10px;
+}
+
+/* Error message styling */
+.error {
+  color: #c33;
+  background: #fee;
+  padding: 12px 16px;
+  border-radius: 10px;
+  margin-top: 15px;
+  border-left: 4px solid #c33;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  text-align: left;
+}
 
