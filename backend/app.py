@@ -1,14 +1,12 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import google.generativeai as genai   #for the google gemini
-import os #gets the API key instead of having it hardcoded
+from groq import Groq
+import os
 import json
 
 app = Flask(__name__)
 CORS(app)
-genai.configure(api_key=os.environ.get('GEMINI_API_KEY'))
-model = genai.GenerativeModel('gemini-1.5-flash')
-
+client = Groq(api_key=os.environ.get('GROQ_API_KEY'))
 
 @app.route('/recommend', methods=['POST'])
 def recommend():
@@ -24,21 +22,21 @@ def recommend():
     ]}}
     """
     try:
-        response = model.generate_content(prompt)
-        text = response.text
+        response = client.chat.completions.create(
+            model="llama-3.1-8b-instant",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.7
+        )
+        
+        text = response.choices[0].message.content
         if '```json' in text:
             text = text.split('```json')[1].split('```')[0]
-        recommendations = json.loads(text)  # converts strings to python dictionary
-        return jsonify(recommendations)  # converts python dictionary to JSON string
+        recommendations = json.loads(text)
+        return jsonify(recommendations)
     
     except Exception as e:
+        print("Error:", e)
         return jsonify({"error": str(e)}), 500
-
-
-
-
-
-
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
