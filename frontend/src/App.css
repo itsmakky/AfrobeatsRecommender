@@ -20,8 +20,8 @@ div{
   padding: 40px 50px 20px 50px;
   border-radius: 20px;
   /*box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);*/
-  width: 80%; 
-  max-width: 550px;
+  width: 90%; 
+  max-width: 700px;
   text-align: center;
 }
 
@@ -101,24 +101,8 @@ button:hover {
 .results {
   margin-top: 25px;
   text-align: left;
-  max-height: 400px;
-  overflow-y: auto;
-  padding-right: 5px;
-}
-
-/* Custom scrollbar for results */
-.results::-webkit-scrollbar {
-  width: 6px;
-}
-
-.results::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 10px;
-}
-
-.results::-webkit-scrollbar-thumb {
-  background: purple;
-  border-radius: 10px;
+  width: 100%;
+  overflow: hidden;
 }
 
 .song-card {
@@ -129,6 +113,8 @@ button:hover {
   border-left: 5px solid purple;
   transition: all 0.3s ease;
   cursor: default;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .song-card:hover {
@@ -143,6 +129,8 @@ button:hover {
   gap: 10px;
   font-size: 16px;
   font-family: 'Inter', sans-serif;
+  width: 100%;
+  flex-wrap: wrap;
 }
 
 .song-number {
@@ -154,19 +142,22 @@ button:hover {
   padding: 2px 8px;
   border-radius: 50%;
   text-align: center;
+  flex-shrink: 0;
 }
 
 .song-title {
   font-weight: 700;
   color: #1a1a2e;
   font-size: 16px;
+  
+max-width: 100%;
 }
 
 .song-artist {
   color: #666;
   font-size: 14px;
+  white-space: nowrap;
 }
-
 /* Song card animation on load */
 .song-card {
   animation: slideIn 0.3s ease forwards;
