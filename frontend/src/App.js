@@ -79,12 +79,20 @@ function App() {
         <h3>🎵 Recommendations</h3>
         {recommendations.map((song, index) => (
           <div key={index} className="song-card">
-            <div classname="song-info">
+            <div className="song-info">
               <span className="song-number">{index + 1}.</span>
               <span className="song-title">{song.title}</span>
-              <span className="song-artist">- {song.artist}</span>
+              <span className="song-artist">by {song.artist}</span>
 
             </div>
+            {song.preview_url ? (
+          <audio controls className="song-preview">
+            <source src={song.preview_url} type="audio/mpeg" />
+            Your browser does not support the audio element.
+          </audio>
+        ) : (
+          <p className="no-preview">🔇 No preview available</p>
+        )}
           </div>
         ))}
       </div>
