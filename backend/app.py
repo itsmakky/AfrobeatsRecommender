@@ -23,8 +23,6 @@ ARTIST_SONGS = {
     "kizz daniel": ["Buga", "Fever", "Lie"],
     "joeboy": ["Baby", "Alcohol", "Sip"],
     "tems": ["Free Mind", "Damages", "Try Me"],
-    "asea": ["Carry", "Fasta", "Moto"],
-    "shenseea": ["Blessed", "Trending", "Danger"],
     "mavins": ["Overdue", "Rosemary", "Closer"],
 }
 
