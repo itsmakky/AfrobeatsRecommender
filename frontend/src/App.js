@@ -40,26 +40,30 @@ function App() {
 
   return (
     <div>
-      <div className='row'>
-        <label className="mood" htmlFor="mood">Mood:</label>
-        <select id="mood" name="mood" value={mood} onChange={(e) => setMood(e.target.value)}>
-          <option value="happy">Happy</option>
-          <option value="sad">Sad</option>
-          <option value="energetic">Energetic</option>
-          <option value="chill">Chill</option>
-          <option value="party">Party</option>
-        </select>
-      </div>
+      <h1 className="welcome-title">🎵 Welcome to Afrobeats Recommender</h1>
+      
+      <div className="form-container">
+        <div className='row'>
+          <label className="mood" htmlFor="mood">Mood:</label>
+          <select id="mood" name="mood" value={mood} onChange={(e) => setMood(e.target.value)}>
+            <option value="happy">Happy</option>
+            <option value="sad">Sad</option>
+            <option value="energetic">Energetic</option>
+            <option value="chill">Chill</option>
+            <option value="party">Party</option>
+          </select>
+        </div>
 
-      <div className='row'>
-        <label className='activity' htmlFor='activity'>What are you doing?</label>
-        <input type="text" id="activity" placeholder='e.g., working, driving' value={activity} onChange={(e) => setActivity(e.target.value)} />
-      </div>
+        <div className='row'>
+          <label className='activity' htmlFor='activity'>What are you doing?</label>
+          <input type="text" id="activity" placeholder='e.g., working, driving' value={activity} onChange={(e) => setActivity(e.target.value)} />
+        </div>
 
-      <div>
-        <button className='search-btn' onClick={fetchRecommendations} disabled={loading}>
-          {loading ? "Searching ..." : "Search recommendations"}
-        </button>
+        <div>
+          <button className='search-btn' onClick={fetchRecommendations} disabled={loading}>
+            {loading ? "Searching ..." : "Search recommendations"}
+          </button>
+        </div>
       </div>
 
       {error && <div className='error'>{error}</div>}
