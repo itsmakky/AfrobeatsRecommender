@@ -5,22 +5,40 @@ import os
 import json
 import re
 import random
-from database import get_song_for_artist  # ← CHANGED: Import from database
 
 app = Flask(__name__)
 CORS(app)
 client = Groq(api_key=os.environ.get('GROQ_API_KEY'))
 
+# The list of real songs
+ARTIST_SONGS = {
+    "wizkid": ["Essence", "Ojuelegba", "Joro", "Come Closer", "Soco"],
+    "burna boy": ["Last Last", "Ye", "On The Low", "Anybody"],
+    "rema": ["Calm Down", "Dumebi", "Soundgasm"],
+    "davido": ["Fall", "If", "Assurance", "Fia"],
+    "ayra starr": ["Rush", "Bloody Samaritan"],
+    "ckay": ["Love Nwantiti", "Emiliana"],
+    "fireboy dml": ["Peru", "Scatter", "Bandana"],
+    "olamide": ["Dangote", "Wo", "Caro"],
+    "kizz daniel": ["Buga", "Fever", "Lie"],
+    "joeboy": ["Baby", "Alcohol", "Sip"],
+    "tems": ["Free Mind", "Damages", "Try Me"],
+    "tiwa savage": ["Somebody's Son", "Koroba", "49-99", "All Over"],
+    "mr eazi": ["Leg Over", "Pour Me Water", "Skin Tight"],
+    "tekno": ["Pana", "Duro", "Skeletun"],
+    "yemi alade": ["Johnny", "Oh My Gosh", "Tumbum"],
+    "flavour": ["Bia", "Nwa Baby", "Baby Na Yoka"],
+    "omah lay": ["Godly", "Bad Influence", "Understand"],
+    "ruger": ["Bounce", "Dior", "Girlfriend"]
+}
+
 def extract_json(text):
-    """Extract JSON from Groq response"""
     json_match = re.search(r'```json\s*([\s\S]*?)\s*```', text)
     if json_match:
         text = json_match.group(1)
-    
     json_match = re.search(r'(\{[\s\S]*\})', text)
     if json_match:
         text = json_match.group(1)
-    
     return text
 
 @app.route('/recommend', methods=['POST'])
@@ -30,77 +48,57 @@ def recommend():
     activity = data.get('activity')
 
     prompt = f"""
-    Recommend exactly 5 REAL afrobeats ARTISTS for someone who is feeling {mood} while {activity}.
+    You are an expert Afrobeats DJ. 
+    The user is feeling {mood} and is currently doing this activity: {activity}.
 
+    Think carefully about the vibe of this specific activity:
+    - If they are studying/working, choose chill, focus-friendly artists (e.g., Tems, Fireboy DML, Omah Lay).
+    - If they are driving/partying, choose high-energy, fast-tempo artists (e.g., Rema, Burna Boy, Ruger).
+    - If they are sad, choose emotional, deep artists (e.g., Joeboy, Omah Lay).
+
+    Recommend exactly 5 REAL afrobeats ARTISTS that perfectly match this specific vibe.
+    
     CRITICAL RULES:
-    1. ONLY recommend REAL artists who actually exist
-    2. Choose from well-known, popular Afrobeats artists
-    3. Mix up the artists (don't repeat)
-    4. Return EXACTLY 5 artists
-
-    Examples of REAL artists: Wizkid, Burna Boy, Rema, Davido, Ayra Starr, CKay, Fireboy DML, Olamide, Kizz Daniel, Joeboy, Tems
-
+    1. ONLY recommend REAL artists who actually exist.
+    2. Do NOT just list the most popular artists. Match the VIBE of the activity.
+    3. Return EXACTLY 5 artists.
+    
     Return ONLY valid JSON in this format:
     {{"artists": ["Artist 1", "Artist 2", "Artist 3", "Artist 4", "Artist 5"]}}
     """
+    
     try:
         response = client.chat.completions.create(
-            model="llama-3.1-8b-instant",
+            model="openai/gpt-oss-20b", 
             messages=[{"role": "user", "content": prompt}],
-            temperature=0.9
+            temperature=1.0  # Increased for more variety
         )
         
         text = response.choices[0].message.content
         print("Raw Groq response:", text)
         
         cleaned_text = extract_json(text)
-        print("Cleaned JSON:", cleaned_text)
-        
         data = json.loads(cleaned_text)
-        
         artists = data.get('artists', [])
-        print(f"Artists received: {artists}")
         
-        # Map each artist to a real song from MongoDB
         songs = []
-        used_artists = set()
         
+        # Pair the artist and song together
         for artist in artists[:5]:
-            clean_artist = artist.strip()
-            song_title = get_song_for_artist(clean_artist)  # ← CHANGED: Uses MongoDB
-            print(f"Artist: {clean_artist} → Song: {song_title}")
-            songs.append({
-                "title": song_title,
-                "artist": clean_artist
-            })
-            used_artists.add(clean_artist.lower())
-        
-        # Fallback if less than 5 songs
-        fallback_artists = ["Wizkid", "Burna Boy", "Davido", "Rema", "Ayra Starr", "CKay", "Fireboy DML", "Olamide", "Kizz Daniel", "Joeboy", "Tems"]
-        
-        if len(songs) < 5:
-            print(f"Only {len(songs)} artists from LLM. Filling with fallback...")
-            for artist in fallback_artists:
-                if len(songs) >= 5:
-                    break
-                if artist.lower() not in used_artists:
-                    song_title = get_song_for_artist(artist)  # ← CHANGED: Uses MongoDB
+            clean_artist = artist.strip().lower()
+            
+            # Check if we have this artist in our list
+            for known_artist, known_songs in ARTIST_SONGS.items():
+                if known_artist in clean_artist or clean_artist in known_artist:
+                    # Pick ONE song for this specific artist
+                    random_song = random.choice(known_songs)
                     songs.append({
-                        "title": song_title,
-                        "artist": artist
+                        "title": random_song, 
+                        "artist": artist.strip()
                     })
-                    used_artists.add(artist.lower())
-                    print(f"Fallback: {artist} → Song: {song_title}")
+                    break # Found the artist, move to the next one
         
-        random.shuffle(songs)
-        final_songs = songs[:5]
-        print(f"Returning {len(final_songs)} songs")
-        
-        return jsonify({"songs": final_songs})
-    
-    except json.JSONDecodeError as e:
-        print(f"JSON Error: {e}")
-        return jsonify({"error": "Failed to parse JSON from LLM"}), 500
+        return jsonify({"songs": songs})
     
     except Exception as e:
         print("Error:", e)

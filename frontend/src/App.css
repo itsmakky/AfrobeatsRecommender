@@ -6,121 +6,159 @@
   box-sizing: border-box;
 }
 
-body{
+/* The outside background is a dark purple */
+body {
   min-height: 100vh;
   margin: 0;       
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: plum;
+  background-color: #2d1b4e; 
 }
 
-div{
-  background-color: white;
-  padding: 40px 50px 20px 50px;
+/* The main card is BLACK */
+div {
+  background-color: #121212; 
+  padding: 40px 50px;
   border-radius: 20px;
-  /*box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);*/
-  width: 90%; 
-  max-width: 700px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); 
+  width: 95%;        /* Increased from 90% */
+  max-width: 850px;  /* Increased from 700px */
   text-align: center;
 }
 
-.row{
-  background-color: white;
+/* Welcome Title */
+.welcome-title {
+  font-family: 'Playfair Display', serif;
+  color: #ffffff;
+  font-size: 32px;
+  font-weight: 600;
+  margin-bottom: 30px;
+  text-align: center;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 10px rgba(216, 180, 254, 0.3);
+}
+
+/* The inner box holding the form */
+.form-container {
+  background-color: #1e152e; 
+  padding: 30px;
+  border-radius: 15px;
+  margin-bottom: 30px;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 20px;
-  padding: 0;
-  width: 100%;
+  flex-direction: column;
   gap: 20px;
 }
 
-.mood , .activity{
-  color: purple;
-  background-color: white;
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 15px;
+}
+
+/* Labels */
+.mood, .activity {
+  color: #ffffff; 
   font-family: 'Playfair Display', serif;
-  font-size: 15px;
+  font-style: italic;
+  font-size: 16px;
   font-weight: 600;
-  margin-right: 10px;
   white-space: nowrap;
-  min-width: 120px;
+  width: 180px; /* Changed from fixed width to allow more room */
   text-align: left;
+
 }
 
-select{
-  padding: 8px 12px;
-  font-family: 'Inter', serif;
+/* Inputs and Dropdowns */
+select, input {
+  padding: 12px 15px;
+  font-family: 'Playfair Display', serif; 
+  font-size: 16px;
+  font-style: italic; 
   border-radius: 10px;
-  flex: 1;
-  background-color: white;
-  border: 2px solid #e0e0e0;
+  flex: 1;          /* This tells it to take up ALL remaining space */
+  width: 100%;      
+  background-color: #121212; 
+  color: #ffffff;
+  border: 2px solid #333333;
+  transition: all 0.3s ease;
 }
 
-option{
-  font-family: 'Times New Roman', Times, serif;
-  background-color: white;
-
-}
-
-input{
-  padding: 8px 12px;
-  font-family: 'Inter', serif;
-  font-size: 15px;
-  border: 2px solid #e0e0e0;
-  border-radius: 10px;
-  flex: 1; /* Takes remaining space */
-  background-color: white;
-}
-
-input:focus {
+select:focus, input:focus {
   outline: none;
-  border-color: purple;
+  border-color: #d8b4fe; 
+  box-shadow: 0 0 8px rgba(216, 180, 254, 0.3); 
 }
 
+option {
+  font-family: 'Playfair Display', serif;
+  background-color: #121212;
+  color: #ffffff;
+}
+
+::placeholder {
+  color: #777777;
+  font-style: italic;
+  opacity: 1;
+}
+
+/* Button */
 button {
-  padding: 10px 30px;
-  font-family: 'Inter', serif;
-  font-size: 15px;
+  padding: 12px 30px;
+  font-family: 'Playfair Display', serif; /* Fancy font */
+  font-size: 18px;
   font-weight: 600;
-  background-color: purple;
-  color: white;
+  font-style: italic; /* Added italic to match */
+  background-color: #d8b4fe; 
+  color: #121212;
   border: none;
   border-radius: 10px;
   cursor: pointer;
-  margin-top: 10px;
-  margin-bottom: 0;
+  transition: all 0.3s ease;
+  width: 100%;
 }
 
-button:hover {
-  background-color: #6a0dad;
+button:hover:not(:disabled) {
+  background-color: #c084fc;
+  transform: translateY(-2px);
+}
+
+button:disabled {
+  background-color: #5d3a85;
+  cursor: not-allowed;
 }
 
 /* ===== MUSIC RECOMMENDATIONS STYLES ===== */
 
 .results {
-  margin-top: 25px;
+  margin-top: 10px;
   text-align: left;
   width: 100%;
   overflow: hidden;
 }
 
+/* Song cards */
 .song-card {
-  background: #f8f8f8;
-  padding: 14px 18px;
-  margin-bottom: 10px;
+  background: #1e1e1e; 
+  padding: 15px 20px;
+  margin-bottom: 12px;
   border-radius: 12px;
-  border-left: 5px solid purple;
+  border-left: 5px solid #d8b4fe; 
   transition: all 0.3s ease;
   cursor: default;
   width: 100%;
   box-sizing: border-box;
+  animation: slideIn 0.3s ease forwards;
+  opacity: 0;
+  transform: translateY(-10px);
 }
 
 .song-card:hover {
-  background: #f0f0f0;
+  background: #2a2a2a;
   transform: translateX(5px);
-  box-shadow: 0 4px 12px rgba(128, 0, 128, 0.15);
+  box-shadow: 0 4px 12px rgba(216, 180, 254, 0.15);
 }
 
 .song-info {
@@ -131,14 +169,15 @@ button:hover {
   font-family: 'Inter', sans-serif;
   width: 100%;
   flex-wrap: wrap;
+  margin-bottom: 10px;
 }
 
 .song-number {
-  color: purple;
+  color: #121212;
   font-weight: 700;
   font-size: 14px;
   min-width: 28px;
-  background: #f0e6f0;
+  background: #d8b4fe; 
   padding: 2px 8px;
   border-radius: 50%;
   text-align: center;
@@ -147,22 +186,32 @@ button:hover {
 
 .song-title {
   font-weight: 700;
-  color: #1a1a2e;
-  font-size: 16px;
-  
-max-width: 100%;
+  color: #ffffff; 
+  font-size: 17px;
+  max-width: 100%;
 }
 
 .song-artist {
-  color: #666;
-  font-size: 14px;
+  color: #aaaaaa; 
+  font-size: 15px;
   white-space: nowrap;
 }
-/* Song card animation on load */
-.song-card {
-  animation: slideIn 0.3s ease forwards;
-  opacity: 0;
-  transform: translateY(-10px);
+
+.youtube-link {
+  display: inline-block;
+  text-decoration: none;
+  color: #121212;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  background-color: #d8b4fe;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.youtube-link:hover {
+  background-color: #c084fc;
 }
 
 .song-card:nth-child(1) { animation-delay: 0.05s; }
@@ -172,37 +221,29 @@ max-width: 100%;
 .song-card:nth-child(5) { animation-delay: 0.25s; }
 
 @keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-/* Results heading */
 .results h3 {
   font-family: 'Playfair Display', serif;
-  color: #1a1a2e;
-  font-size: 22px;
-  margin-bottom: 18px;
+  color: #ffffff; 
+  font-size: 26px;
+  margin-bottom: 20px;
   text-align: center;
-  border-bottom: 2px solid #f0e6f0;
+  border-bottom: 2px solid #333333;
   padding-bottom: 10px;
 }
 
-/* Error message styling */
 .error {
-  color: #c33;
-  background: #fee;
+  color: #ff6b6b;
+  background: #3a1520;
   padding: 12px 16px;
   border-radius: 10px;
   margin-top: 15px;
-  border-left: 4px solid #c33;
-  font-family: 'Inter', sans-serif;
-  font-size: 14px;
+  border-left: 4px solid #ff6b6b;
+  font-family: 'Playfair Display', serif; /* Changed to Playfair */
+  font-size: 16px; /* Slightly larger for readability */
+  font-style: italic; /* Adds that fancy touch matching the input */
   text-align: left;
 }
-
