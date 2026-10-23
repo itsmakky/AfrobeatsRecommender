@@ -3,7 +3,6 @@ from flask_cors import CORS
 from groq import Groq
 import os
 import json
-import re
 import random
 
 app = Flask(__name__)
@@ -32,20 +31,28 @@ ARTIST_SONGS = {
     "ruger": ["Bounce", "Dior", "Girlfriend"]
 }
 
-def extract_json(text):
-    json_match = re.search(r'```json\s*([\s\S]*?)\s*```', text)
-    if json_match:
-        text = json_match.group(1)
-    json_match = re.search(r'(\{[\s\S]*\})', text)
-    if json_match:
-        text = json_match.group(1)
-    return text
+# The backend will ONLY accept activities containing these words
+VALID_ACTIVITIES = [
+    "work", "working", "study", "studying", "drive", "driving", "gym", 
+    "working out", "run", "running", "cook", "cooking", "clean", "cleaning",
+    "relax", "relaxing", "chill", "chilling", "sleep", "sleeping", "party",
+    "partying", "dance", "dancing", "commute", "commuting", "travel", 
+    "traveling", "read", "reading", "write", "writing", "code", "coding", 
+    "game", "gaming", "play", "playing", "exercise", "exercising"
+]
 
 @app.route('/recommend', methods=['POST'])
 def recommend():
     data = request.get_json()
     mood = data.get('mood')
-    activity = data.get('activity')
+    activity = data.get('activity').lower().strip()
+
+    # BACKEND GATEKEEPER: Check if the activity is valid
+    is_valid = any(word in activity for word in VALID_ACTIVITIES)
+    
+    if not is_valid:
+        print(f"Rejected activity: {activity}")
+        return jsonify({"songs": []})
 
     prompt = f"""
     You are an expert Afrobeats DJ. 
@@ -57,29 +64,40 @@ def recommend():
     - If they are sad, choose emotional, deep artists (e.g., Joeboy, Omah Lay).
 
     Recommend exactly 5 REAL afrobeats ARTISTS that perfectly match this specific vibe.
-    
-    CRITICAL RULES:
-    1. ONLY recommend REAL artists who actually exist.
-    2. Do NOT just list the most popular artists. Match the VIBE of the activity.
-    3. Return EXACTLY 5 artists.
-    
-    Return ONLY valid JSON in this format:
-    {{"artists": ["Artist 1", "Artist 2", "Artist 3", "Artist 4", "Artist 5"]}}
     """
     
     try:
+        # USING JSON SCHEMA MODE
         response = client.chat.completions.create(
             model="openai/gpt-oss-20b", 
             messages=[{"role": "user", "content": prompt}],
-            temperature=1.0  # Increased for more variety
+            temperature=1.0,
+            response_format={
+                "type": "json_schema",
+                "json_schema": {
+                    "name": "artist_recommendations",
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "artists": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                },
+                                "description": "A list of exactly 5 Afrobeats artist names."
+                            }
+                        },
+                        "required": ["artists"]
+                    }
+                }
+            }
         )
         
-        text = response.choices[0].message.content
-        print("Raw Groq response:", text)
-        
-        cleaned_text = extract_json(text)
-        data = json.loads(cleaned_text)
-        artists = data.get('artists', [])
+        # Because we used JSON Schema, the response is GUARANTEED to be clean JSON.
+        # We don't even need regex to extract it anymore!
+        result = json.loads(response.choices[0].message.content)
+        artists = result.get('artists', [])
+        print("Artists returned by AI:", artists)
         
         songs = []
         
@@ -96,7 +114,7 @@ def recommend():
                         "title": random_song, 
                         "artist": artist.strip()
                     })
-                    break # Found the artist, move to the next one
+                    break
         
         return jsonify({"songs": songs})
     

@@ -2,6 +2,7 @@ import './App.css';
 import { useState } from 'react';
 
 function App() {
+  const [showWelcome, setShowWelcome] = useState(true); 
   const [mood, setMood] = useState('happy');
   const [activity, setActivity] = useState('');
   const [loading, setLoading] = useState(false);
@@ -29,7 +30,15 @@ function App() {
       }
 
       const data = await response.json();
-      setRecommendations(data.songs || []);
+      
+      // If the AI returned no songs (because the activity was gibberish)
+      if (!data.songs || data.songs.length === 0) {
+        setError("That activity doesn't make sense! Please enter something real (e.g., working, driving, studying).");
+        setRecommendations([]);
+      } else {
+        setRecommendations(data.songs);
+      }
+      
     } catch (err) {
       setError("Error recommending");
       console.log("Error:", err);
@@ -38,6 +47,22 @@ function App() {
     }
   };
 
+  // If showWelcome is true, display the full-screen landing page
+  if (showWelcome) {
+    return (
+      <div className="landing-screen">
+        <h1 className="landing-title">Afrobeats Recommender</h1>
+        <p className="landing-subtitle">
+          Find the perfect Afrobeats tracks for your mood and activity, curated by AI.
+        </p>
+        <button className="start-btn" onClick={() => setShowWelcome(false)}>
+          Enter App
+        </button>
+      </div>
+    );
+  }
+
+  // If showWelcome is false, display the main app inside the black card
   return (
     <div>
       <h1 className="welcome-title">🎵 Welcome to Afrobeats Recommender</h1>
